@@ -15,12 +15,12 @@
   5) Copia esta lista de declaraciones dentro de tu archivo para luego rellenarlas con tus credenciales. Lo que si te recomiendo que dejes tal cual esta es DB_ENGINE
      a menos que por algun motivo quieras cambiar de base de datos.
      
-      DB_ENGINE=postgresql+psycopg2
-      DB_HOST=localhost
-      DB_USER=postgres
-      DB_PASSWORD=passejemplo
-      DB_PORT=5432
-      DB_NAME=alkemy_challenge_bbdd
+     DB_ENGINE=postgresql+psycopg2
+		 DB_HOST=localhost
+		 DB_USER=postgres
+		 DB_PASSWORD=passejemplo
+		 DB_PORT=5432
+		 DB_NAME=alkemy_challenge_bbdd
    
   6) Ejecuta el archivo main.py YA TENES TU PIPELINE CORRIENDO FELICIDADESS!!!
   
