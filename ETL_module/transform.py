@@ -14,6 +14,15 @@ logging.basicConfig(level=logging.INFO)
 
 
 def __to_a_single_dataframe(category):
+    """This private function generate a personalized path with datetime functions and category to the
+        to fin in RAW DATA the specific csv that you find and transform it in a pandas DataFrame 
+
+    Args:
+        category (str): category of the dataframe you are looking for 
+
+    Returns:
+        pd.DataFrame: Returns the dataframe of the category you were looking for
+    """
     global _date_today
     _month_today = datetime.today().strftime('%Y-%B')
     _date_today = datetime.today().strftime('%d-%m-%Y')
@@ -25,6 +34,11 @@ def __to_a_single_dataframe(category):
 
 
 def _to_a_dict_dataframe():
+    """This function use __to_a_single_dataframe to automatically find the tree dataframes
+
+    Returns:
+        dicts: Returns a dictionary with category-dataframe pairs 
+    """
     CATEGORIES = ['Bibliotecas', 'Cines', 'Museos']
     dfs_dict = {}
 
@@ -36,6 +50,7 @@ def _to_a_dict_dataframe():
 
 
 def __upload_date_column(df: DataFrame):
+    """Add the updated_date column to the dataframe and return it """
     df['fecha_actualizacion'] = _date_today
 
     return df
@@ -43,7 +58,15 @@ def __upload_date_column(df: DataFrame):
 
 # First Consign of Trnsformation
 def _normalize_dfs_table_one(dfs_dict: dict):
-    
+    """This this function leaves our dataframes with only the columns
+       of interest in order to later be able to join them without problems 
+
+    Args:
+        dfs_dict (dict): A dict with the category-dataframe pairs  
+
+    Returns:
+        dict: A dict with the category-dataframe pairs BUT THE COLUMNS ARE THE SAME IN ALL
+    """
 
     dfs_dict_copy = dfs_dict.copy()
    
@@ -73,6 +96,7 @@ def _normalize_dfs_table_one(dfs_dict: dict):
 
 
 def _unique_dataframe(dfs_dict: dict):
+    """Unifiqued all of the dataframes in the dictionary"""
       
     _unifiqued_dataframe = pd.concat(dfs_dict.values(), axis=0)
 
@@ -80,18 +104,20 @@ def _unique_dataframe(dfs_dict: dict):
 
 
 def _process_normalize_unique_df(df: DataFrame):
+    """Concat 'telefono' and 'cod_area' columns to can drop 'cod_area' """
 
-        df['telefono'] = df.apply(lambda x: str(x['cod_area']).replace('.0', '')+ ' ' + str(x['telefono']) 
-                                                        if( x['telefono'] != 'nan' and str(x['cod_area']) != 'nan') 
-                                                        else str(x), axis =1)
+    df['telefono'] = df.apply(lambda x: str(x['cod_area']).replace('.0', '')+ ' ' + str(x['telefono']) 
+                                                    if( x['telefono'] != 'nan' and str(x['cod_area']) != 'nan') 
+                                                    else str(x), axis =1)
 
-        df.drop(['cod_area'], axis=1, inplace=True)                  
-        
-        return df
+    df.drop(['cod_area'], axis=1, inplace=True)                  
+    
+    return df
 
 
 # Second Consign of Transformation
 def _normalize_dfs_table_quantity(dfs_dict: dict):
+    """removes capital letters and accents"""
 
     dfs_dict_copy = dfs_dict.copy()
 
@@ -111,6 +137,9 @@ def _normalize_dfs_table_quantity(dfs_dict: dict):
 
 
 def _groupby_qualities(dataframe: DataFrame):
+    """group by qualities and concatenate the tables results 
+       as requested in the slogan IDK really hahahha, sorry
+       because you have to see this"""
 
     df_quantity_categ = dataframe.groupby(['categoria']).count()
     df_quantity_fuente = dataframe.groupby(['fuente']).count()
@@ -125,6 +154,8 @@ def _groupby_qualities(dataframe: DataFrame):
 
 # Third Consign of Transformation
 def _normalize_df_cines():
+    """Use the private function __to_a_single_dataframe to get the specific cinemas
+        dataframe, then take only the columns that interest for the study and normalize it"""
     logging.info(f'Normalizing columns of the cinemas\'s DataFrame')
     df_cine = __to_a_single_dataframe('Cines')
     df_cine = df_cine.loc[:,['Provincia','espacio_INCAA','Pantallas','Butacas']]
@@ -136,6 +167,7 @@ def _normalize_df_cines():
 
 
 def _groupby_provincias(df: DataFrame):
+    """Group by provincias to implement the aggregation functions"""
     df_cine = df.groupby('Provincia').agg(sum)
 
     return df_cine

@@ -15,6 +15,11 @@ logging.basicConfig(level=logging.INFO)
 
 
 def _get_config():
+    """This is a private function used to take the urls in webs.yaml and save them in webs
+
+    Returns:
+        list: list of webs to scrape
+    """
 
     logging.info('Getting URLs')
     with open('ETL_module\extract\webs.yaml', mode='r') as f:
@@ -24,6 +29,12 @@ def _get_config():
 
 
 def _order_download_files(category, response):
+    """This is a private function used to save and organize the CSV files in folder segmented by category and dates
+
+    Args:
+        category (str): category of the CSV
+        response (_type_): content of the CSV file
+    """
 
     month_today = datetime.today().strftime('%Y-%B')
     date_today = datetime.today().strftime('%d-%m-%Y')
@@ -36,7 +47,14 @@ def _order_download_files(category, response):
     logging.info(f'The new {category} file was uploaded to the raw_data folder')
     
 
-def get_csv_file(category, URL):
+def _get_csv_file(category, URL):
+    """This is a private function used to scrape the home of the URL to find the href attr
+        to import the csv content
+
+    Args:
+        category (int): category that corresponds to the url
+        URL (inr): url to scrape
+    """
 
     try:
         response = requests.get(URL)
@@ -62,12 +80,13 @@ def get_csv_file(category, URL):
 
 
 def extract_func():
+    """MAIN FUNCTION"""
     logging.info('STARTING EXTRACT INFORMATION PROCESS')
     logging.info('\n')
 
     webs = _get_config()
     for category, url in webs['webs'].items():
-        get_csv_file(category, url)
+        _get_csv_file(category, url)
 
     logging.info('EXTRACT INFORMATION SUCCEEDED')
     logging.info('\n')
